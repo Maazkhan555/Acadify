@@ -55,6 +55,10 @@ def create_app():
     app.register_blueprint(teacher_bp)
     app.register_blueprint(parent_bp)
 
+    # Eagerly warm up AI models in background so they are ready when first request arrives
+    from ai_service import warmup_models
+    warmup_models()
+
     return app
 
 app = create_app()

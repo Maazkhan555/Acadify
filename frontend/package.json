@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"vite\" \"cd backend && \\\"..\\..\\EDU 12\\EDU 12\\EDU 12\\EDU\\.venv\\Scripts\\activate.bat\\\" && python app.py\"",
+    "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"

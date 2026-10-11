@@ -23,8 +23,8 @@ from imblearn.pipeline import Pipeline as ImbPipeline
 
 warnings.filterwarnings("ignore")
 
-BASE = os.path.join(os.path.dirname(__file__), "models", "student_risk_prediction_model_artifacts")
-CSV  = os.path.join(os.path.dirname(__file__), "models", "student_dataset.csv")
+BASE = os.path.join(os.path.dirname(__file__), "ai_model", "student_risk_prediction_model_artifacts")
+CSV  = os.path.join(os.path.dirname(__file__), "ai_model", "student_dataset.csv")
 
 # ── Load & engineer features ──────────────────────────────────────────────────
 df = pd.read_csv(CSV)

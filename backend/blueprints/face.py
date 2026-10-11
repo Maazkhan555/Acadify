@@ -86,13 +86,23 @@ def _mark_face_attendance(student_id, student_name, roll_no, session_id=None):
 @login_required
 @role_required('admin', 'teacher', 'student')
 def api_face_status():
-    if not face_recognizer.ready:
+    from ai_service import face_recognizer as fr, emotion_predictor as ep
+    face_ready = fr.ready
+    emotion_ready = ep.ready
+    if not face_ready:
         return jsonify({
             'success': False,
             'ready': False,
-            'message': 'Face recognition models are unavailable. Check the server logs.'
+            'face_recognition': False,
+            'emotion': emotion_ready,
+            'message': 'Face recognition model is still loading. Please wait a moment and try again.'
         }), 503
-    return jsonify({'success': True, 'ready': True})
+    return jsonify({
+        'success': True,
+        'ready': True,
+        'face_recognition': face_ready,
+        'emotion': emotion_ready,
+    })
 
 @face_bp.route('/face/attendance')
 @login_required
