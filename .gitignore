@@ -2,7 +2,24 @@ node_modules/
 venv/
 .venv/
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
 .env
 .env.*
 !.env.example
 .git/
+
+# Duplicate/generated model artifacts — keep only backend/
+frontend/ai_model/
+frontend/ai_service/
+frontend/AI_FACE_PROJECT/
+
+# Runtime-generated model cache (regenerated on first startup)
+backend/face_attendance_models/best_facenet_model_fixed.keras
+
+# Training data (not needed at runtime)
+backend/ai_model/student_dataset.csv
+backend/ai_model/student_risk_prediction_model_artifacts.zip

@@ -5,10 +5,8 @@ Never reloads on each request; instantiate once and reuse.
 import os
 import pickle
 
-# Prefer the trained AI_FACE_PROJECT artifacts, with the existing copy as fallback.
 _BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _MODEL_DIRS = [
-    os.path.abspath(os.path.join(_BASE, '..', 'AI_FACE_PROJECT', 'AI_FACE_PROJECT')),
     os.path.join(_BASE, 'ai_model'),
 ]
 
@@ -27,26 +25,30 @@ class EmotionModel:
         keras_path = os.path.join(model_dir, 'face_expression_model.keras')
         pkl_path = os.path.join(model_dir, 'face_expression_model.pkl')
 
+        # Always initialise idx_to_class so predict() never crashes
+        self.idx_to_class = {i: c for i, c in enumerate(self.classes)}
+
         # ── 1. Load PKL metadata ──────────────────────────────────────────────
         if not os.path.exists(pkl_path):
-            print(f"[EmotionModel] WARNING: PKL not found at {pkl_path}")
+            print(f"[EmotionModel] WARNING: PKL not found at {pkl_path}, using defaults")
         else:
             try:
                 with open(pkl_path, 'rb') as f:
                     self.metadata = pickle.load(f)
                 self.img_size = self.metadata.get('image_size', (48, 48))
-                self.classes  = self.metadata.get('classes',
-                                self.metadata.get('index_to_class',
-                                {i: c for i, c in enumerate(self.classes)}))
+                classes_raw = self.metadata.get('classes',
+                              self.metadata.get('index_to_class',
+                              {i: c for i, c in enumerate(self.classes)}))
                 # Normalise: support both list and dict formats
-                if isinstance(self.classes, dict):
-                    self.idx_to_class = self.classes
-                    self.classes = [self.classes[i] for i in sorted(self.classes)]
+                if isinstance(classes_raw, dict):
+                    self.idx_to_class = {int(k): v for k, v in classes_raw.items()}
+                    self.classes = [self.idx_to_class[i] for i in sorted(self.idx_to_class)]
                 else:
+                    self.classes = list(classes_raw)
                     self.idx_to_class = {i: c for i, c in enumerate(self.classes)}
                 print(f"[EmotionModel] PKL loaded — classes: {self.classes}, img_size: {self.img_size}")
             except Exception as e:
-                print(f"[EmotionModel] PKL load error: {e}")
+                print(f"[EmotionModel] PKL load error: {e}, using defaults")
 
         # ── 2. Load Keras model ───────────────────────────────────────────────
         if not os.path.exists(keras_path):
